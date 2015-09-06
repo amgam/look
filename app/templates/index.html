@@ -1,0 +1,56 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div>
+    <h1 ng-cloak>//name//</h1>
+    <!-- <h3>Select an Image</h3> -->
+    <br>
+    <div>
+      <form name="form" ng-submit="submit()" novalidate>
+        <button class="ui labeled icon button" ngf-select ng-model="file" name="file" ngf-pattern="'image/*"
+        accept="image/*" ngf-max-size="20MB" ngf-min-height="100">
+        <i class="camera retro icon"></i>
+        choose image
+      </button>
+      <!-- Multiple files
+      <div class="button" ngf-select ng-model="files" ngf-multiple="true">Select</div> -->
+      <!-- Drop files: <div ngf-drop ng-model="files" class="drop-box">Drop</div>-->
+      <button class="ui icon button" type="submit"><i class="upload icon"></i></button> 
+    </form>
+  </div>
+</div>
+</div>
+<br>
+<br>
+<div class="row">
+  <h2 id="query">query</h2>
+  <br>
+  <img class="img-responsive queryImg" ng-src="//queryImg//" alt="" />
+</div>
+<br><br>
+<div class="row">
+  <div>
+    <h2 id="results">results</h2>
+    <br>
+    <p id="searching">Searching...</p>
+    <p id="error">Oh no! No results! Check your internet connection.</p>
+    <div class="ui six centered stackable link cards">
+      <div class="fluid card" ng-repeat="img in searchResults">
+        <div class="image">
+          <img class="img-responsive" ng-src="//img.url//"/>
+        </div>
+        <div class="content">
+          <p class="header">//img.name//</p>
+          <div class="meta">
+            <span class="date">score: //img.score//</span>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  <br>
+  
+  {% endblock %}
