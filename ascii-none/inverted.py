@@ -75,10 +75,13 @@ def main():
 
 	query = raw_input('Search: ')
 
+	# FIRST QUERY FILTER: STOP WORDS
 	stop = stopwords.words('english')
 	query_keywords = [word for word in query.split() if word not in stop]
+	# SECOND QUERY FILTER: STEMMING
+	query_keywords = [stemmer.stem(word).encode('ascii', 'ignore') for word in query_keywords]
 
-	# FIRST FILTER
+	# FIRST RESULT FILTER
 	# if query word is in hashtag, then return document
 	relevant = []
 	for keyword in query_keywords:
@@ -93,7 +96,7 @@ def main():
 	for filename in relevant:
 		unordered_ranking[filename] = 0
 
-	# SECOND FILTER
+	# SECOND RESULT FILTER
 	# CALC TF-IDF FOR RANKING OF SEARCH RESULTS
 	for filename in unordered_ranking:
 		tags = images[filename]
