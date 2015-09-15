@@ -1,7 +1,13 @@
 import sys
+import operator
 import unicodedata
+import itertools
 import nltk
 from nltk.stem.porter import *
+from nltk.corpus import stopwords
+from nltk.text import TextCollection
+from nltk.corpus import wordnet as wn
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def main():
 
@@ -43,5 +49,70 @@ def main():
 	# 	for tag in images[key]:
 	# 		out.write(tag + ", ")
 	# 	out.write("\n\n")
+
+	all_tags = []
+	for key in images:
+		for tag in images[key]:
+			all_tags.append(tag)
+
+	inverted = {}
+	files = []
+	for tag in all_tags:
+		inverted[tag] = []
+		for key in images:
+			if tag in images[key]:
+				inverted[tag].append(key)
+			
+	# WRITING INVERTED FILE
+	out.write("INVERTED INDEXED " + "\n")			
+	for key in inverted:
+		out.write(key + ": " + str(inverted[key]) + "\n")
+
+	out.write("\n\n" "IDF" + "\n")		
+	col = nltk.TextCollection(images.values())
+	for word in inverted.keys():
+		out.write(word + ": " + str(col.idf(word)) + "\n") 
+
+	query = raw_input('Search: ')
+
+	stop = stopwords.words('english')
+	query_keywords = [word for word in query.split() if word not in stop]
+
+	# FIRST FILTER
+	# if query word is in hashtag, then return document
+	relevant = []
+	for keyword in query_keywords:
+		for key in inverted:
+			if keyword in key:
+				relevant.append(inverted[key])
+
+	# merge lists in relevant list
+	relevant = list(itertools.chain(*relevant))
+	# set dictionary keys
+	unordered_ranking = {}
+	for filename in relevant:
+		unordered_ranking[filename] = 0
+
+	# SECOND FILTER
+	# CALC TF-IDF FOR RANKING OF SEARCH RESULTS
+	for filename in unordered_ranking:
+		tags = images[filename]
+		value = cosine_sim(query_keywords, tags)
+		unordered_ranking[filename] = value
+
+	rankings = sorted(unordered_ranking.items(), key=operator.itemgetter(1), reverse=True)
+
+	for key,value in rankings:
+		print key
+		print value
+
+def cosine_sim(query, document):
+	vect = TfidfVectorizer(min_df=1)
+
+	str_query = str(query)
+	str_doc   = str(document)
+
+	tfidf = vect.fit_transform([str_query, str_doc])
+	return ((tfidf*tfidf.T).A)[0,1] 
 
 main()
