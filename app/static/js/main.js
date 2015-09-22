@@ -15,7 +15,7 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
   $scope.data = {};
 	$scope.name = "aria";
 	console.log($scope.name);
-	$scope.linker = "static/imgDB/"
+	$scope.linker = "static/imgViewer/"
 
   $scope.urlMapper = function(dict){
     var prefix = window.location.href + $scope.linker;

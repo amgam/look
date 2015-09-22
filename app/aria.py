@@ -3,9 +3,9 @@ import os, sys
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
 from werkzeug import secure_filename
 
-from imageEngine.ColorDescriptor import ColorDescriptor
+from imageEngine.PreProcessor import PreProcessor
+from imageEngine.QueryAnalyzer import QueryAnalyzer
 from imageEngine.ImageComparator import ImageComparator
-import cv2
 
 # create flask instance
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/upload")
@@ -14,7 +14,26 @@ ALLOWED_EXTENSIONS = set(['bmp', 'png', 'jpg', 'jpeg', 'gif'])
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-INDEX = os.path.join(os.path.dirname(__file__), 'static/queryDict.json')
+#File paths
+IMG_INFO = 'static/data/imgInfo.json'
+TRAINED_DATA = 'static/data/bof.pkl'
+
+
+IMG_DATA_LOAD = os.path.join(os.path.dirname(__file__), IMG_INFO)
+TRAINED_DATA = os.path.join(os.path.dirname(__file__), TRAINED_DATA)
+
+IMG_DB_FOLDER = os.path.join(os.path.dirname(__file__), 'static/imgDB/')
+
+# Run pre-processor
+preProcessor = PreProcessor(IMG_DATA_LOAD, TRAINED_DATA)
+
+if(preProcessor.isDBMissing()):
+    preProcessor.processImages(IMG_DB_FOLDER) #need to generate processed imageInfo
+
+if(preProcessor.isModelUntrained()):
+    #train model
+    preProcessor.trainData(IMG_DB_FOLDER)
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -35,27 +54,21 @@ def search():
         file = request.files['file']
 
         if file and allowed_file(file.filename):
+            #upload incoming image
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             img = "/static/upload/" + filename
 
             try:
                 QUERY = "static/upload/" + file.filename
-                QUERYPATH = os.path.join(os.path.dirname(__file__), QUERY)
-                print QUERYPATH
-                queryImage = cv2.imread(QUERYPATH)
-                cd = ColorDescriptor((8, 12, 3))
-                queryHist = cd.extractHist(queryImage)
+                QUERY_PATH = os.path.join(os.path.dirname(__file__), QUERY)
 
-               # load the query image and describe it
-               #  for imgPath in imgDB:
-               #      image = cv2.imread(imgFileDirectory + imgPath)
-               #      result = cd.extractHist(image)
-               #      queryDict[imgPath] = result
-               #  pickle.dump(queryDict, open("queryDict.json", "wb"))
+                analyzer = QueryAnalyzer(QUERY_PATH) #analyze incoming image
+                queryHist = analyzer.analyze()
 
-                s = ImageComparator(INDEX)
-                results = s.compare(queryHist)
+                imageComparator = ImageComparator(IMG_DATA_LOAD)
+                results = imageComparator.compareAgainstDB(queryHist)
+                print "\nBINGO\n"
 
                 # loop over the results, displaying the score and image name
                 for (score, resultID) in results:
