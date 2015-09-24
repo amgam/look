@@ -62,6 +62,6 @@ class PreProcessor:
 		result = self.cd.extractHist(image)
 		return result
 
-	def processImageTags(self):
+	def processImageTags(self, query, infile, outfile):
 		text_analysis = TextAnalyzer(query, infile, outfile)
 		text_analysis.run()
