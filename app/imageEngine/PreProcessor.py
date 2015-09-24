@@ -1,9 +1,10 @@
 import os
 import numpy as np
 import simplejson
+import cv2
 from imageEngine.ColorDescriptor import ColorDescriptor
 from imageEngine.BoW.TrainModel import TrainModel
-import cv2
+from imageEngine.TextAnalyzer import TextAnalyzer
 
 class PreProcessor:
 	def __init__(self, DBPath, svmTrainPath):
@@ -61,4 +62,6 @@ class PreProcessor:
 		result = self.cd.extractHist(image)
 		return result
 
-
+	def processImageTags(self):
+		text_analysis = TextAnalyzer(query, infile, outfile)
+		text_analysis.run()
