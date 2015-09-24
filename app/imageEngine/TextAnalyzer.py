@@ -23,7 +23,7 @@ class TextAnalyzer:
 
     def process(self, infile):
         global tokenized_file 
-        tokenized_file = self.tokenize(self.infile)
+        tokenized_file = self.tokenize(infile)
         global inverted_file 
         inverted_file = self.inverted_index(tokenized_file)
 
@@ -34,7 +34,7 @@ class TextAnalyzer:
         global stemmer 
         stemmer = PorterStemmer()
 
-        with open(self.infile, 'r') as f:
+        with open(infile, 'r') as f:
             for line in f:
                 tokens = line.split()
                 for token in tokens:
@@ -59,15 +59,15 @@ class TextAnalyzer:
 
     def inverted_index(self, tokenized_file):
         all_tags = []
-        for key in self.tokenized_file:
-            for tag in self.tokenized_file[key]:
+        for key in tokenized_file:
+            for tag in tokenized_file[key]:
                 all_tags.append(tag)
 
         inverted = {}
         for tag in all_tags:
             inverted[tag] = []
-            for key in self.tokenized_file:
-                if tag in self.tokenized_file[key]:
+            for key in tokenized_file:
+                if tag in tokenized_file[key]:
                     inverted[tag].append(key)
 
         return inverted
@@ -77,7 +77,7 @@ class TextAnalyzer:
         # FIRST QUERY FILTER: STOP WORDS
         stop = stopwords.words('english')
         stop = [word.encode('ascii', 'ignore') for word in stop]
-        processed_query = [word for word in self.query.split() if word not in stop]
+        processed_query = [word for word in query.split() if word not in stop]
 
         # SECOND QUERY FILTER: STEMMING
         processed_query = [stemmer.stem(word).encode('ascii', 'ignore') for word in processed_query]
@@ -86,12 +86,12 @@ class TextAnalyzer:
 
     def print_result(self, query, outfile):
 
-        out = open(self.outfile, 'w')
+        out = open(outfile, 'w')
 
         # FIRST RESULT FILTER
         # if query word is in hashtag, then return document
         relevant = []
-        for keyword in self.query:
+        for keyword in query:
             for key in inverted_file:
                 if keyword in key:
                     relevant.append(inverted_file[key])
@@ -107,21 +107,20 @@ class TextAnalyzer:
         # CALC TF-IDF FOR RANKING OF SEARCH RESULTS
         for filename in unordered_ranking:
             tags = tokenized_file[filename]
-            value = self.cosine_sim(self.query, tags)
+            value = self.cosine_sim(query, tags)
             unordered_ranking[filename] = value
 
         rankings = sorted(unordered_ranking.items(), key=operator.itemgetter(1), reverse=True)
 
         for key,value in rankings:
-            self.out.write(str (key) + "\n")
-            self.out.write(str (value) + "\n\n")
+            out.write(str (key) + "\n")
+            out.write(str (value) + "\n\n")
 
     def cosine_sim(self, query, document):
         vect = TfidfVectorizer(min_df=1)
 
-        str_query = str(self.query)
-        str_doc   = str(self.document)
+        str_query = str(query)
+        str_doc   = str(document)
 
         tfidf = vect.fit_transform([str_query, str_doc])
         return ((tfidf*tfidf.T).A)[0,1]
-        
