@@ -6,6 +6,7 @@ from imageEngine.ColorDescriptor import ColorDescriptor
 from imageEngine.BoW.TrainModel import TrainModel
 from imageEngine.TextAnalyzer import TextAnalyzer
 
+
 class PreProcessor:
 	def __init__(self, DBPath, svmTrainPath):
 		self.DBPath = DBPath
@@ -24,8 +25,8 @@ class PreProcessor:
 
 	def trainData(self, TRAINED_DATA_FOLDER):
 		trainModel = TrainModel(TRAINED_DATA_FOLDER)
+		print "TRAIN:", TRAINED_DATA_FOLDER
 		trainModel.train()
-
 
 	def processImages(self, imgDBFolder):
 		print self.MESSAGE_INIT
@@ -54,6 +55,7 @@ class PreProcessor:
 		with open(outputFileName, 'w') as fp:
 			simplejson.dump(imgInfo, fp)
 
+		self.trainData(imgDBFolder)
 		print self.MESSAGE_SUCCESS
 		return True
 
@@ -61,6 +63,8 @@ class PreProcessor:
 		image = cv2.imread(imgPath)
 		result = self.cd.extractHist(image)
 		return result
+
+	
 
 	def processImageTags(self, query, infile, outfile):
 		text_analysis = TextAnalyzer(query, infile, outfile)

@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, glob
 
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
 from werkzeug import secure_filename
@@ -30,10 +30,9 @@ preProcessor = PreProcessor(IMG_DATA_LOAD, TRAINED_DATA)
 if(preProcessor.isDBMissing()):
     preProcessor.processImages(IMG_DB_FOLDER) #need to generate processed imageInfo
 
-if(preProcessor.isModelUntrained()):
-    #train model
-    preProcessor.trainData(IMG_DB_FOLDER)
-
+# if(preProcessor.isModelUntrained()):
+#     #train model
+#     preProcessor.trainData(IMG_DB_FOLDER)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -56,18 +55,35 @@ def search():
         if file and allowed_file(file.filename):
             #upload incoming image
             filename = secure_filename(file.filename)
+
+            #clear contents
+            dirPath = UPLOAD_FOLDER
+            fileList = os.listdir(dirPath)
+            for fileName in fileList:
+                os.remove(dirPath+"/"+fileName)
+
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            img = "/static/upload/" + filename
+
+            
+            # img = "/static/upload/" + filename
 
             try:
                 QUERY = "static/upload/" + file.filename
                 QUERY_PATH = os.path.join(os.path.dirname(__file__), QUERY)
 
                 analyzer = QueryAnalyzer(QUERY_PATH) #analyze incoming image
-                queryHist = analyzer.analyze()
+                queryHistVisual = analyzer.analyze("visual")
+                print "VIZ:", type(queryHistVisual)
+                queryHistColor = analyzer.analyze("color")
+                print "COL:", type(queryHistColor)
 
                 imageComparator = ImageComparator(IMG_DATA_LOAD)
-                results = imageComparator.compareAgainstDB(queryHist)
+
+                resultsVectorVisual = imageComparator.compareAgainstDB(queryHistVisual, "visual")
+                resultsVectorColor = imageComparator.compareAgainstDB(queryHistColor, "color")
+
+
+                results = imageComparator.combineResults(resultsVectorColor, resultsVectorVisual)
                 print "\nBINGO\n"
 
                 # loop over the results, displaying the score and image name
