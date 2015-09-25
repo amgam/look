@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import simplejson
+import json as simplejson
 import cv2
 from imageEngine.ColorDescriptor import ColorDescriptor
 from imageEngine.BoW.TrainModel import TrainModel
@@ -64,4 +64,6 @@ class PreProcessor:
 
 	def processImageTags(self, query, infile, outfile):
 		text_analysis = TextAnalyzer(query, infile, outfile)
-		text_analysis.run()
+		text_result = text_analysis.run()
+
+		return text_result

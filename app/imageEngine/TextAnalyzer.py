@@ -10,16 +10,17 @@ from nltk.corpus import wordnet as wn
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TextAnalyzer:
-    def __init__(self, query, infile, outfile):
-        self.query   = query
+    def __init__(self, queryfile, infile):
+        self.queryfile   = queryfile
         self.infile  = infile
-        self.outfile = outfile
 
     def run(self):
         self.process(self.infile)
-        query = self.query
-        self.print_result(process_query(query), self.outfile)
-        print "\n\nSearch completed"
+        queryfile = self.queryfile
+        processed_query = process_query(queryfile)
+        final_result = {}
+        for key in processed_query:
+            final_result[key] = get_result(processed_query[key])
 
     def process(self, infile):
         global tokenized_file 
@@ -74,19 +75,34 @@ class TextAnalyzer:
 
     def process_query(self, query):
 
-        # FIRST QUERY FILTER: STOP WORDS
-        stop = stopwords.words('english')
-        stop = [word.encode('ascii', 'ignore') for word in stop]
-        processed_query = [word for word in query.split() if word not in stop]
+        query_images = {}
 
-        # SECOND QUERY FILTER: STEMMING
-        processed_query = [stemmer.stem(word).encode('ascii', 'ignore') for word in processed_query]
+        #process query
+        with open(query, 'r') as f:
+            for line in f:
+                tokens = line.split()
+                for token in tokens:
+                    try:
+                        token.encode('utf-8')
+                        token.encode('ascii', 'ignore')
+                    except UnicodeDecodeError:
+                        tokens.remove(token)
+                    if ".jpg" in token:
+                        img_name = token
+                        query_images[img_name] = []
+                        tokens.remove(img_name)
+                query_images[img_name] = tokens
 
-        return processed_query
 
-    def print_result(self, query, outfile):
+        for key in query_images:
+            try:
+                query_images[key] = [stemmer.stem(tag).encode('ascii', 'ignore') for tag in query_images[key]]
+            except UnicodeDecodeError:
+                print "UDE"
 
-        out = open(outfile, 'w')
+        return query_images
+
+    def get_result(self, query):
 
         # FIRST RESULT FILTER
         # if query word is in hashtag, then return document
@@ -112,10 +128,8 @@ class TextAnalyzer:
 
         rankings = sorted(unordered_ranking.items(), key=operator.itemgetter(1), reverse=True)
 
-        for key,value in rankings:
-            out.write(str (key) + "\n")
-            out.write(str (value) + "\n\n")
-
+        return rankings
+        
     def cosine_sim(self, query, document):
         vect = TfidfVectorizer(min_df=1)
 
