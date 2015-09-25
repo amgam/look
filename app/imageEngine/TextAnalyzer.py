@@ -23,6 +23,8 @@ class TextAnalyzer:
             final_result[key] = get_result(processed_query[key]) # dictionary of dictionary
             # e.g. {'img03.jpg': [], 'img01.jpg': [('0343_1212317787.jpg', 0.51533624684855583), ('0328_241052832.jpg', 0.0)],'img02.jpg': [('0344_19537427.jpg', 0.090424214018589646), ('0525_299997219.jpg', 0.074334264587756188), ('0255_521307759.jpg', 0.057896701429244544), ('0052_449204753.jpg', 0.053665579619274116), ('0328_241052832.jpg', 0.037816053840828701)]}
 
+        return final_result
+        
     def process(self, infile):
         global tokenized_file 
         tokenized_file = self.tokenize(infile)
