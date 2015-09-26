@@ -31,12 +31,9 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
     });
   };
 
-  // upload later on form submit or something similar
   $scope.submit = function() {
       $scope.upload($scope.file);
-      // if ($scope.form.file.$valid && $scope.file && !$scope.file.$error) {
-      //   $scope.upload($scope.file);
-      // }
+      $scope.uploadtext($scope.textfile);
   };
 
   // upload on file select or drop
@@ -63,4 +60,17 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
             console.log('error status: ' + status);
         });
     };
+
+    $scope.uploadtext = function (textfile) {
+      Upload.upload({
+        url: 'static/querytags/',
+        fields: {'textfileName': "textfile"},
+        file: textfile
+      }).success(function(data, status, headers, config) {
+        console.log('textfile uploaded successfully')
+      }).error(function(data, status, headers, config) {
+        console.log('textfile upload error status: ' + status);
+      }); 
+    };
+
 }]);
