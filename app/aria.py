@@ -3,9 +3,9 @@ import os, sys, glob
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
 from werkzeug import secure_filename
 
-from imageEngine.PreProcessor import PreProcessor
-from imageEngine.QueryAnalyzer import QueryAnalyzer
+from imageEngine.ColorDescriptor import ColorDescriptor
 from imageEngine.ImageComparator import ImageComparator
+import cv2
 
 # create flask instance
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.realpath(__file__)), "static/upload")
@@ -14,6 +14,7 @@ ALLOWED_EXTENSIONS = set(['bmp', 'png', 'jpg', 'jpeg', 'gif'])
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+<<<<<<< HEAD
 #File paths
 IMG_INFO = 'static/data/imgInfo.json'
 TRAINED_DATA = 'static/data/bof.pkl'
@@ -33,6 +34,9 @@ if(preProcessor.isDBMissing()):
 # if(preProcessor.isModelUntrained()):
 #     #train model
 #     preProcessor.trainData(IMG_DB_FOLDER)
+=======
+INDEX = os.path.join(os.path.dirname(__file__), 'static/queryDict.json')
+>>>>>>> parent of 16f23e8... BoW Visual Keywords SVM integrated
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -53,7 +57,6 @@ def search():
         file = request.files['file']
 
         if file and allowed_file(file.filename):
-            #upload incoming image
             filename = secure_filename(file.filename)
 
             #clear contents
@@ -69,6 +72,7 @@ def search():
 
             try:
                 QUERY = "static/upload/" + file.filename
+<<<<<<< HEAD
                 QUERY_PATH = os.path.join(os.path.dirname(__file__), QUERY)
 
                 analyzer = QueryAnalyzer(QUERY_PATH) #analyze incoming image
@@ -85,6 +89,23 @@ def search():
 
                 results = imageComparator.combineResults(resultsVectorColor, resultsVectorVisual)
                 print "\nBINGO\n"
+=======
+                QUERYPATH = os.path.join(os.path.dirname(__file__), QUERY)
+                print QUERYPATH
+                queryImage = cv2.imread(QUERYPATH)
+                cd = ColorDescriptor((8, 12, 3))
+                queryHist = cd.extractHist(queryImage)
+
+               # load the query image and describe it
+               #  for imgPath in imgDB:
+               #      image = cv2.imread(imgFileDirectory + imgPath)
+               #      result = cd.extractHist(image)
+               #      queryDict[imgPath] = result
+               #  pickle.dump(queryDict, open("queryDict.json", "wb"))
+
+                s = ImageComparator(INDEX)
+                results = s.compare(queryHist)
+>>>>>>> parent of 16f23e8... BoW Visual Keywords SVM integrated
 
                 # loop over the results, displaying the score and image name
                 for (score, resultID) in results:
