@@ -41,7 +41,7 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
       $("#searching").show();
       angular.forEach(files, function(file) {
         file.upload = Upload.upload({
-          url: '/search',
+          url: 'static/upload/',
           file: file
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
