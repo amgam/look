@@ -40,16 +40,22 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
     $scope.upload = function (file) {
       $("#searching").show();
 <<<<<<< HEAD
+<<<<<<< HEAD
       angular.forEach(files, function(file) {
         file.upload = Upload.upload({
           url: 'static/upload/',
           file: file
 =======
+=======
+>>>>>>> parent of 84a0362... add multiple files
 
         Upload.upload({
             url: '/search',
             fields: {'username': $scope.username},
             file: file
+<<<<<<< HEAD
+>>>>>>> parent of 84a0362... add multiple files
+=======
 >>>>>>> parent of 84a0362... add multiple files
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
