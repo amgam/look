@@ -19,12 +19,6 @@ class QueryAnalyzer:
 			# print uploadLocation
 			t = TrainModel(uploadLocation, "analyze")
 			queryHist = t.uploadAnalysis()
-
+		
 		# print "query", queryHist
 		return queryHist
-
-    def processImageTags(self, query, infile):
-		text_analysis = TextAnalyzer(query, infile)
-		text_result = text_analysis.run()
-
-		return text_result

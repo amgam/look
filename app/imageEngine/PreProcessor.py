@@ -63,3 +63,11 @@ class PreProcessor:
 		image = cv2.imread(imgPath)
 		result = self.cd.extractHist(image)
 		return result
+
+	
+
+	def processImageTags(self, query, infile, outfile):
+		text_analysis = TextAnalyzer(query, infile, outfile)
+		text_result = text_analysis.run()
+
+		return text_result

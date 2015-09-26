@@ -23,8 +23,6 @@ IMG_DATA_LOAD = os.path.join(os.path.dirname(__file__), IMG_INFO)
 TRAINED_DATA = os.path.join(os.path.dirname(__file__), TRAINED_DATA)
 
 IMG_DB_FOLDER = os.path.join(os.path.dirname(__file__), 'static/imgDB/')
-TAGS_FILE = os.path.join(os.path.dirname(__file__), 'static/tags/train_tags.txt')
-
 
 # Run pre-processor
 preProcessor = PreProcessor(IMG_DATA_LOAD, TRAINED_DATA)
@@ -66,7 +64,7 @@ def search():
 
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-
+            
             # img = "/static/upload/" + filename
 
             try:
@@ -74,12 +72,10 @@ def search():
                 QUERY_PATH = os.path.join(os.path.dirname(__file__), QUERY)
 
                 analyzer = QueryAnalyzer(QUERY_PATH) #analyze incoming image
-
                 queryHistVisual = analyzer.analyze("visual")
-                # print "VIZ:", type(queryHistVisual)
+                print "VIZ:", type(queryHistVisual)
                 queryHistColor = analyzer.analyze("color")
-                # print "COL:", type(queryHistColor)
-                scoresText = analyzer.processImageTags(queryTags, TAGS_FILE)
+                print "COL:", type(queryHistColor)
 
                 imageComparator = ImageComparator(IMG_DATA_LOAD)
 

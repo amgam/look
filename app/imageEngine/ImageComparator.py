@@ -30,11 +30,11 @@ class ImageComparator:
 
 		# queryDict = simplejson.loads(open(self.indexPath, "rb"))
 		for imgName, info in queryDict.iteritems():
-
+			
 			if flag == "color":
 				#Color Hist Comparsion
 				features = info["histoDetails"]
-				distance = self.visualDistance(queryFeatures, features) 
+				distance = self.euclideanDistance(queryFeatures, features) 
 				results[imgName] = distance
 			elif flag == "visual":
 				#Visual Hist
