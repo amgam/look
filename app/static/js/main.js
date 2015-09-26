@@ -33,30 +33,21 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
 
   $scope.submit = function() {
       $scope.upload($scope.file);
-      $scope.uploadtext($scope.textfile);
+      // $scope.uploadtext($scope.textfile);
   };
 
   // upload on file select or drop
     $scope.upload = function (file) {
       $("#searching").show();
-<<<<<<< HEAD
-<<<<<<< HEAD
-      angular.forEach(files, function(file) {
-        file.upload = Upload.upload({
-          url: 'static/upload/',
-          file: file
-=======
-=======
->>>>>>> parent of 84a0362... add multiple files
+      // angular.forEach(files, function(file) {
+      //   file.upload = Upload.upload({
+      //     url: 'static/upload/',
+      //     file: file
 
         Upload.upload({
             url: '/search',
             fields: {'username': $scope.username},
             file: file
-<<<<<<< HEAD
->>>>>>> parent of 84a0362... add multiple files
-=======
->>>>>>> parent of 84a0362... add multiple files
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
             console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
@@ -74,16 +65,16 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
         });
     };
 
-    $scope.uploadtext = function (textfile) {
-      Upload.upload({
-        url: 'static/querytags/',
-        fields: {'textfileName': "textfile"},
-        file: textfile
-      }).success(function(data, status, headers, config) {
-        console.log('textfile uploaded successfully')
-      }).error(function(data, status, headers, config) {
-        console.log('textfile upload error status: ' + status);
-      }); 
-    };
+    // $scope.uploadtext = function (textfile) {
+    //   Upload.upload({
+    //     url: 'static/querytags/',
+    //     fields: {'textfileName': "textfile"},
+    //     file: textfile
+    //   }).success(function(data, status, headers, config) {
+    //     console.log('textfile uploaded successfully')
+    //   }).error(function(data, status, headers, config) {
+    //     console.log('textfile upload error status: ' + status);
+    //   }); 
+    // };
 
 }]);
