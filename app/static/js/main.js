@@ -32,17 +32,25 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
   };
 
   $scope.submit = function() {
-      $scope.upload($scope.files);
-      // $scope.uploadtext($scope.textfile);
+      $scope.upload($scope.file);
+      $scope.uploadtext($scope.textfile);
   };
 
   // upload on file select or drop
-    $scope.upload = function (files) {
+    $scope.upload = function (file) {
       $("#searching").show();
+<<<<<<< HEAD
       angular.forEach(files, function(file) {
         file.upload = Upload.upload({
           url: 'static/upload/',
           file: file
+=======
+
+        Upload.upload({
+            url: '/search',
+            fields: {'username': $scope.username},
+            file: file
+>>>>>>> parent of 84a0362... add multiple files
         }).progress(function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
             console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
@@ -58,38 +66,18 @@ app.controller('SearchCtrl', ['$scope', 'Upload', function SearchController($sco
         }).error(function (data, status, headers, config) {
             console.log('error status: ' + status);
         });
+    };
+
+    $scope.uploadtext = function (textfile) {
+      Upload.upload({
+        url: 'static/querytags/',
+        fields: {'textfileName': "textfile"},
+        file: textfile
+      }).success(function(data, status, headers, config) {
+        console.log('textfile uploaded successfully')
+      }).error(function(data, status, headers, config) {
+        console.log('textfile upload error status: ' + status);
       }); 
-        // Upload.upload({
-        //     url: '/search',
-        //     fields: {'username': $scope.username},
-        //     file: file
-        // }).progress(function (evt) {
-        //     var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-        //     console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
-        // }).success(function (data, status, headers, config) {
-        //     $("#searching").hide();
-
-        //     console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
-        //     // console.log(JSON.stringify(data));
-        //     $scope.searchResults = $scope.urlMapper(data["results"]);
-        //     console.log($scope.searchResults);
-        //     $("#query").show();
-        //     $("#results").show();
-        // }).error(function (data, status, headers, config) {
-        //     console.log('error status: ' + status);
-        // });
-    }
-
-    // $scope.uploadtext = function (textfile) {
-    //   Upload.upload({
-    //     url: 'static/querytags/',
-    //     fields: {'textfileName': "textfile"},
-    //     file: textfile
-    //   }).success(function(data, status, headers, config) {
-    //     console.log('textfile uploaded successfully')
-    //   }).error(function(data, status, headers, config) {
-    //     console.log('textfile upload error status: ' + status);
-    //   }); 
-    // };
+    };
 
 }]);
