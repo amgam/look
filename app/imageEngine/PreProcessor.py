@@ -1,7 +1,7 @@
 import os
 import numpy as np
-import json as simplejson
 import cv2
+import simplejson
 from imageEngine.ColorDescriptor import ColorDescriptor
 from imageEngine.BoW.TrainModel import TrainModel
 from imageEngine.TextAnalyzer import TextAnalyzer
