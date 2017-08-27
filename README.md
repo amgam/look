@@ -1,5 +1,4 @@
-#aria
-py-based image search engine
+#Look - py-based image search engine
 
 ### Setup
 
@@ -36,4 +35,4 @@ python app/aria.py
 ```
 It should tell you the URL that the local server is running off.
 
-aria intialized.
+look intialized.
